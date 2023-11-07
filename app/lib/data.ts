@@ -9,28 +9,38 @@ import {
   Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
+import { useEffect, useState } from 'react';
+
+// export async function fetchRevenue() {
+//   try {
+//     const data = await sql<Revenue>`SELECT * FROM revenue`;
+//     return data.rows;
+//   } catch (error) {
+//     console.error('Database Error:', error);
+//     throw new Error('Failed to fetch revenue data.');
+//   }
+// }
 
 export async function fetchRevenue() {
-  // Add noStore() here prevent the response from being cached.
-  // This is equivalent to in fetch(..., {cache: 'no-store'}).
-
-  try {
-    // Artificially delay a reponse for demo purposes.
-    // Don't do this in real life :)
-
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    const data = await sql<Revenue>`SELECT * FROM revenue`;
-
-    // console.log('Data fetch complete after 3 seconds.');
-
-    return data.rows;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
+	try {
+	  const data = await sql<Revenue>`SELECT * FROM revenue`;
+	  return data.rows;
+	} catch (error) {
+	  console.error('Database Error:', error);
+	  throw new Error('Failed to fetch revenue data.');
+	}
   }
+  
+export const useRevenue = () => {
+	const [revenue, setRevenue] = useState<Revenue[] | undefined>(undefined);
+
+	useEffect(() => {
+		fetchRevenue().then((data) => setRevenue(data));
+	}, []);
+
+	return revenue;
 }
+
 
 export async function fetchLatestInvoices() {
   try {
